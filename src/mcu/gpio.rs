@@ -169,6 +169,120 @@ pub fn pin_setup(port: GpioPort, pin: u8, mode: GpioMode) {
 	set_pin_mode(port, pin, mode);
 }
 
+#[allow(dead_code)]
+pub fn set_alt_func(port: GpioPort, pin: u8, func: u8) {
+	let mask: u32 = !(0xF << ((pin % 8) * 4));
+	let func: u32 = !((func as u32 & 0xF) << ((pin % 8) * 4));
+
+	free(|cs| {
+		match port {
+			GpioPort::PortA => if let Some(ref mut gpio) = GPIOA_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+			GpioPort::PortB => if let Some(ref mut gpio) = GPIOB_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+			GpioPort::PortC => if let Some(ref mut gpio) = GPIOC_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+			GpioPort::PortD => if let Some(ref mut gpio) = GPIOD_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+			GpioPort::PortE => if let Some(ref mut gpio) = GPIOE_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+			GpioPort::PortF => if let Some(ref mut gpio) = GPIOF_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+			GpioPort::PortG => if let Some(ref mut gpio) = GPIOG_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+			GpioPort::PortH => if let Some(ref mut gpio) = GPIOH_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				if pin < 8 {
+					gpio.afrl.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+				else {
+					gpio.afrh.modify(|r, w| unsafe { w.bits((r.bits() & mask) | func) })
+				}
+			},
+		}
+	});
+}
+
+#[allow(dead_code)]
+pub fn set_pin_state(port: GpioPort, pin: u8, state: PinState) {
+	let value = if let PinState::PinHigh = state {
+		1 << pin
+	}
+	else {
+		0x1_0000 << pin
+	};
+
+	free(|cs| {
+		match port {
+			GpioPort::PortA => if let Some(ref mut gpio) = GPIOA_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+			GpioPort::PortB => if let Some(ref mut gpio) = GPIOB_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+			GpioPort::PortC => if let Some(ref mut gpio) = GPIOC_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+			GpioPort::PortD => if let Some(ref mut gpio) = GPIOD_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+			GpioPort::PortE => if let Some(ref mut gpio) = GPIOE_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+			GpioPort::PortF => if let Some(ref mut gpio) = GPIOF_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+			GpioPort::PortG => if let Some(ref mut gpio) = GPIOG_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+			GpioPort::PortH => if let Some(ref mut gpio) = GPIOH_HANDLE.borrow(cs).borrow_mut().deref_mut() {
+				gpio.bsrr.write(|w| unsafe { w.bits(value) })
+			},
+		}
+	});
+}
+
 //==============================================================================
 // Private Functions
 //==============================================================================
