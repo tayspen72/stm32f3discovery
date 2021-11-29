@@ -165,8 +165,10 @@ pub fn get_pin_state(port: GpioPort, pin: u8) -> PinState {
 }
 
 #[allow(dead_code)]
-pub fn pin_setup(port: GpioPort, pin: u8, mode: GpioMode) {
+pub fn pin_setup(port: GpioPort, pin: u8, mode: GpioMode, pull: PinPull, state: PinState) {
 	set_pin_mode(port, pin, mode);
+	set_pin_pull(port, pin, pull);
+	set_pin_state(port, pin, state);
 }
 
 #[allow(dead_code)]
