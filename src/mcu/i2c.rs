@@ -1,21 +1,15 @@
 //==============================================================================
 // Notes
 //==============================================================================
-// mcu/mod.rs
+// mcu/i2c.rs
 
 //==============================================================================
 // Crates and Mods
 //==============================================================================
+use core::cell::RefCell;
+// use core::ops::DerefMut;
+use cortex_m::interrupt::{free, Mutex};
 use stm32f3::stm32f303;
-
-pub mod adc;
-pub mod gpio;
-pub mod i2c;
-pub mod rtc;
-pub mod spi;
-pub mod timer;
-pub mod uart;
-pub mod wdt;
 
 //==============================================================================
 // Enums, Structs, and Types
@@ -25,62 +19,24 @@ pub mod wdt;
 //==============================================================================
 // Variables
 //==============================================================================
-
+static I2C1_HANDLE: Mutex<RefCell<Option<stm32f303::I2C1>>> = 
+	Mutex::new(RefCell::new(None));
+static I2C2_HANDLE: Mutex<RefCell<Option<stm32f303::I2C2>>> = 
+	Mutex::new(RefCell::new(None));
+static I2C3_HANDLE: Mutex<RefCell<Option<stm32f303::I2C3>>> = 
+	Mutex::new(RefCell::new(None));
 
 //==============================================================================
 // Public Functions
 //==============================================================================
-pub fn init() {
-	let peripherals = stm32f303::Peripherals::take().unwrap();
+pub fn init(
+	i2c1: stm32f303::I2C1,
+	i2c2: stm32f303::I2C2,
+	i2c3: stm32f303::I2C3) {
 	
-	// GPIO must be initialized first
-	gpio::init(
-		peripherals.GPIOA,
-		peripherals.GPIOB,
-		peripherals.GPIOC,
-		peripherals.GPIOD,
-		peripherals.GPIOE,
-		peripherals.GPIOF,
-		peripherals.GPIOG,
-		peripherals.GPIOH
-	);
-
-	adc::init(
-		peripherals.ADC1,
-		peripherals.ADC2,
-		peripherals.ADC3,
-		peripherals.ADC4
-	);
-	i2c::init(
-		peripherals.I2C1,
-		peripherals.I2C2,
-		peripherals.I2C3
-	);
-	rtc::init(peripherals.RTC);
-	spi::init(
-		peripherals.SPI1,
-		peripherals.SPI2,
-		peripherals.SPI3,
-		peripherals.SPI4
-	);
-	timer::init(
-		peripherals.TIM1,
-		peripherals.TIM8,
-		peripherals.TIM6,
-		peripherals.TIM7,
-		peripherals.TIM2,
-		peripherals.TIM3,
-		peripherals.TIM4,
-		peripherals.TIM15,
-		peripherals.TIM16,
-		peripherals.TIM17
-	);
-	uart::init(
-		peripherals.USART1,
-		peripherals.USART2,
-		peripherals.USART3
-	);
-	wdt::init(peripherals.IWDG);
+	free(|cs| I2C1_HANDLE.borrow(cs).replace(Some(i2c1)));
+	free(|cs| I2C2_HANDLE.borrow(cs).replace(Some(i2c2)));
+	free(|cs| I2C3_HANDLE.borrow(cs).replace(Some(i2c3)));
 }
 
 //==============================================================================
@@ -92,12 +48,5 @@ pub fn init() {
 // Task Handler
 //==============================================================================
 pub fn task_handler() {
-	adc::task_handler();
-	gpio::task_handler();
-	i2c::task_handler();
-	rtc::task_handler();
-	spi::task_handler();
-	timer::task_handler();
-	uart::task_handler();
-	wdt::task_handler();
+
 }
