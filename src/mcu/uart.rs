@@ -11,10 +11,32 @@ use core::cell::RefCell;
 use cortex_m::interrupt::{free, Mutex};
 use stm32f3::stm32f303;
 
+use crate::mcu::gpio;
+
 //==============================================================================
 // Enums, Structs, and Types
 //==============================================================================
+#[allow(dead_code)]
+pub struct Uart {
+	rx_port: gpio::GpioPort,
+	rx_pin: u8,
+	tx_port: gpio::GpioPort,
+	tx_pin: u8,
+	rts_port: gpio::GpioPort,
+	rts_pin: u8,
+	cts_port: gpio::GpioPort,
+	cts_pin: u8,
+	usart: Usart,
+	baud: u32,
+	next: Option<*mut Uart>
+}
 
+#[allow(dead_code)]
+pub enum Usart{
+	Usart1,
+	Usart2,
+	Usart3
+}
 
 //==============================================================================
 // Variables
