@@ -21,6 +21,13 @@ pub mod wdt;
 //==============================================================================
 // Enums, Structs, and Types
 //==============================================================================
+pub struct Clocks {
+	HighSpeed: u32,
+	LowSpeed: u32,
+	AHB: u32,
+	APB1: u32,
+	APB2: u32
+}
 
 
 //==============================================================================
@@ -33,6 +40,8 @@ pub mod wdt;
 //==============================================================================
 pub fn init() {
 	let peripherals = stm32f303::Peripherals::take().unwrap();
+
+	init_clock(peripherals.RCC);
 	
 	adc::init(
 		peripherals.ADC1,
@@ -84,12 +93,25 @@ pub fn init() {
 		peripherals.USART2,
 		peripherals.USART3
 	);
-	wdt::init(peripherals.IWDG);
+	wdt::init(
+		peripherals.IWDG
+	);
 }
 
 //==============================================================================
 // Private Functions
 //==============================================================================
+fn init_clock(rcc: stm32f303::RTC) {
+	// The main system clock can be sourced from the following:
+	//   * HSI (High Speed Internal)
+	//   * HSE (High Speed Extetnal)
+	//   * PLL
+	//   * LSI (Low Speed Internal 40kHz)
+	//   * LSE (Low Speed External - 35.768kHz) 
+
+	// This board has an 8MHz clock signal from the ST-Link MCU at 8MHz on HSE
+
+}
 
 
 //==============================================================================
