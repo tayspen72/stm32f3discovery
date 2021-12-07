@@ -16,4 +16,8 @@
 //==============================================================================
 // Variables
 //==============================================================================
-
+// Clocks
+pub const EXTERNAL_HIGH_SPEED: bool = true;
+pub const HIGH_SPEED_CLOCK: u32 = 8_000_000;	// Fixed at 8MHz - ST-Link MCU
+pub const EXTERNAL_LOW_SPEED: bool = true;
+pub const LOW_SPEED_CLOCK: u32 = 32_768;		// Fixed at 8MHz - ST-Link MCU

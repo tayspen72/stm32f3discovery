@@ -9,6 +9,7 @@
 use stm32f3::stm32f303;
 
 pub mod adc;
+pub mod clocks;
 pub mod flash;
 pub mod gpio;
 pub mod i2c;
@@ -21,13 +22,6 @@ pub mod wdt;
 //==============================================================================
 // Enums, Structs, and Types
 //==============================================================================
-pub struct Clocks {
-	HighSpeed: u32,
-	LowSpeed: u32,
-	AHB: u32,
-	APB1: u32,
-	APB2: u32
-}
 
 
 //==============================================================================
@@ -41,7 +35,9 @@ pub struct Clocks {
 pub fn init() {
 	let peripherals = stm32f303::Peripherals::take().unwrap();
 
-	init_clock(peripherals.RCC);
+	clocks::init(
+		peripherals.RCC
+	);
 	
 	adc::init(
 		peripherals.ADC1,
@@ -101,17 +97,6 @@ pub fn init() {
 //==============================================================================
 // Private Functions
 //==============================================================================
-fn init_clock(rcc: stm32f303::RTC) {
-	// The main system clock can be sourced from the following:
-	//   * HSI (High Speed Internal)
-	//   * HSE (High Speed Extetnal)
-	//   * PLL
-	//   * LSI (Low Speed Internal 40kHz)
-	//   * LSE (Low Speed External - 35.768kHz) 
-
-	// This board has an 8MHz clock signal from the ST-Link MCU at 8MHz on HSE
-
-}
 
 
 //==============================================================================
@@ -119,6 +104,7 @@ fn init_clock(rcc: stm32f303::RTC) {
 //==============================================================================
 pub fn task_handler() {
 	adc::task_handler();
+	clocks::task_handler();
 	flash::task_handler();
 	gpio::task_handler();
 	i2c::task_handler();
